@@ -106,7 +106,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		return new Statement(ViteMapper::class, [
 			'baseUrl' => $this->resolveUrl($config),
 			'basePath' => new Statement('$path = ?', [$this->resolvePath($config)]),
-			'manifestPath' => $config->manifest ? new Statement('Nette\Utils\FileSystem::resolvePath($path, ?)', [$config->manifest]) : null,
+			'manifestPath' => $config->manifest ? new Statement('Nette\Assets\Helpers::resolvePath($path, ?)', [$config->manifest]) : null,
 			'devServer' => $this->resolveDevServer($config),
 			'publicMapper' => $this->createFileMapper($config),
 		]);
@@ -128,7 +128,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	private function resolvePath(\stdClass $config): Statement
 	{
 		$path = isset($this->basePath, $config->path)
-			? new Statement('Nette\Utils\FileSystem::resolvePath(?, ?)', [$this->basePath, $config->path])
+			? new Statement('Nette\Assets\Helpers::resolvePath(?, ?)', [$this->basePath, $config->path])
 			: $config->path ?? $this->basePath ?? throw new \LogicException("Assets: 'basePath' is not defined");
 		return new Statement("rtrim(?, '\\/')", [$path]);
 	}

@@ -125,6 +125,22 @@ final class Helpers
 
 
 	/**
+	 * Resolves a potentially relative path against a base path.
+	 * Absolute paths are returned as-is; relative paths are prefixed with $basePath.
+	 */
+	public static function resolvePath(string $basePath, string $relativePath): string
+	{
+		if ($relativePath === '') {
+			return $basePath;
+		}
+		if ($relativePath[0] === '/' || $relativePath[0] === '\\' || preg_match('~^[a-z]:\\\\~i', $relativePath)) {
+			return $relativePath;
+		}
+		return rtrim($basePath, '/\\') . '/' . $relativePath;
+	}
+
+
+	/**
 	 * Reads the Vite dev server URL from the given info file, or returns null if unavailable.
 	 */
 	public static function detectDevServer(string $infoFile): ?string

@@ -3,7 +3,6 @@
 namespace Nette\Assets;
 
 use Nette\Utils\FileSystem;
-use Nette\Utils\Json;
 use function array_filter, array_values, is_array, preg_match, str_starts_with;
 
 
@@ -138,7 +137,7 @@ class ViteMapper implements Mapper
 	{
 		$path = $this->manifestPath ?? $this->basePath . '/.vite/manifest.json';
 		try {
-			$res = Json::decode(FileSystem::read($path), forceArrays: true);
+			$res = json_decode(FileSystem::read($path), associative: true, flags: JSON_THROW_ON_ERROR);
 		} catch (\Throwable $e) {
 			throw new \RuntimeException("Failed to read Vite manifest from '$path'. Did you run 'npm run build'?", 0, $e);
 		}

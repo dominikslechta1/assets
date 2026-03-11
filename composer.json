@@ -16,7 +16,7 @@
 	],
 	"require": {
 		"php": "8.1 - 8.5",
-		"nette/utils": "^4.0.6"
+		"nette/utils": "^3.1 || ^4.0"
 	},
 	"suggest": {
 		"latte/latte": "Allows using Assets in templates"
