@@ -4,6 +4,9 @@ parameters:
 	paths:
 		- src
 
+	excludePaths:
+		- src/Bridges/AssetsLatte/AssetMacros.php
+
 	ignoreErrors:
 		# LazyLoad trait: PHP < 8.4 workaround intentionally unsets readonly properties and assigns them later via __get()
 		-
@@ -39,6 +42,19 @@ parameters:
 		# $el->attributes is nullable in older Latte versions, non-nullable in newer; nullsafe kept for compatibility
 		-
 			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Bridges/AssetsLatte/Nodes/NAssetNode.php
+			reportUnmatched: false
+
+		# ExpressionAttributeNode was added in newer Latte; class may not exist in all supported versions
+		-
+			identifier: class.notFound
+			path: src/Bridges/AssetsLatte/Nodes/NAssetNode.php
+			reportUnmatched: false
+
+		# children property is nullable in some Latte versions
+		-
+			identifier: foreach.nonIterable
 			count: 1
 			path: src/Bridges/AssetsLatte/Nodes/NAssetNode.php
 			reportUnmatched: false

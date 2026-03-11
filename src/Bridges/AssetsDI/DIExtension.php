@@ -7,6 +7,7 @@ use Nette\Assets\FilesystemMapper;
 use Nette\Assets\Registry;
 use Nette\Assets\ViteMapper;
 use Nette\Bridges\AssetsLatte\LatteExtension;
+use Nette\Bridges\AssetsLatte\Runtime;
 use Nette\DI\Definitions\Statement;
 use Nette\Schema\Expect;
 use function is_string;
@@ -116,11 +117,27 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
-		if ($name = $builder->getByType(Nette\Bridges\ApplicationLatte\LatteFactory::class)) {
-			$def = $builder->getDefinition($name);
-			assert($def instanceof Nette\DI\Definitions\FactoryDefinition);
-			$def->getResultDefinition()
-				->addSetup('addExtension', [new Statement(LatteExtension::class)]);
+		$name = $builder->getByType(Nette\Bridges\ApplicationLatte\LatteFactory::class)
+			?? $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory');
+
+		if (!$name) {
+			return;
+		}
+
+		$def = $builder->getDefinition($name);
+		assert($def instanceof Nette\DI\Definitions\FactoryDefinition);
+		$resultDef = $def->getResultDefinition();
+
+		if (class_exists(\Latte\Extension::class)) {
+			// Latte 3
+			$resultDef->addSetup('addExtension', [new Statement(LatteExtension::class)]);
+		} else {
+			// Latte 2
+			$resultDef->addSetup('addProvider', ['assets', new Statement(Runtime::class)]);
+			$resultDef->addSetup(
+				'?->onCompile[] = function ($engine) { \Nette\Bridges\AssetsLatte\AssetMacros::install($engine->getCompiler()); }',
+				['@self'],
+			);
 		}
 	}
 
