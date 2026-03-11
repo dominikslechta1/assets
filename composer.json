@@ -34,7 +34,6 @@
 		"nette/phpstan-rules": "^1.0"
 	},
 	"conflict": {
-		"nette/bootstrap": "<3.2.5",
 		"nette/http": "<3.3.2"
 	},
 	"autoload": {
